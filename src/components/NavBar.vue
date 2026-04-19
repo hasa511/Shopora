@@ -1,5 +1,5 @@
 <template>
-  <nav class="shadow-md" style="background-color: #4B5E41;">
+  <nav class="shadow-md" style="background-color: #483146;">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       
       <!-- Logo -->
@@ -34,13 +34,13 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div v-if="isOpen" class="md:hidden px-4 pb-4" style="background-color: #4B5E41;">
+    <div v-if="isOpen" class="md:hidden px-4 pb-4" style="background-color: #483146;">
       <ul class="space-y-3 font-medium text-white">
         <li>
           <router-link to="/" @click="toggleMenu" class="hover:text-yellow-200 block">Home</router-link>
         </li>
         <li>
-          <router-link to="/products" @click="toggleMenu" class="hover:text-yellow-200 block">Products</router-link>
+          <router-link to="/products" @click="toggleMenu" class="hover:text-#1E1E1E block">Products</router-link>
         </li>
         <li>
           <router-link to="/cart" @click="toggleMenu" class="hover:text-yellow-200 block flex items-center gap-1">
