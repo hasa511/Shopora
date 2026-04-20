@@ -1,14 +1,13 @@
 <template>
   <nav class="shadow-md" style="background-color: #483146;">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+    <div class="px-4 py-3 flex justify-between items-center">
       
-      <!-- Logo -->
+      <!-- Logo - Now on the left -->
       <div class="flex items-center space-x-2">
-        
         <h1 class="text-xl font-bold text-white">Shopora</h1>
       </div>
 
-      <!-- Desktop Menu -->
+      <!-- Desktop Menu - Now on the right -->
       <ul class="hidden md:flex space-x-6 font-medium text-white">
         <li>
           <router-link to="/" class="hover:text-yellow-200 transition">Home</router-link>
@@ -40,7 +39,7 @@
           <router-link to="/" @click="toggleMenu" class="hover:text-yellow-200 block">Home</router-link>
         </li>
         <li>
-          <router-link to="/products" @click="toggleMenu" class="hover:text-#1E1E1E block">Products</router-link>
+          <router-link to="/products" @click="toggleMenu" class="hover:text-yellow-200 block">Products</router-link>
         </li>
         <li>
           <router-link to="/cart" @click="toggleMenu" class="hover:text-yellow-200 block flex items-center gap-1">

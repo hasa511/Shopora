@@ -1,109 +1,168 @@
 <template>
   <div class="min-h-screen bg-gray-100">
-    
     <!-- Hero Section -->
-    <div>
-    <NavBar />
-    <div class="container mx-auto px-4 py-16 text-center">
-      <div class="text-6xl mb-4">🛍️</div>
-      <h1 class="text-4xl font-bold text-gray-800 mb-4">Shopora</h1>
-      <p class="text-gray-600 text-lg mb-2">Your Premier Shopping Destination</p>
-      <p class="text-gray-500 max-w-md mx-auto">
-        Welcome to Shopora - where quality meets affordability. Discover amazing products at unbeatable prices.
-      </p>
-      <button 
-        class="mt-6 text-white px-6 py-2 rounded-full transition"
-        style="background-color: #8576A5;"
-        @mouseover="event => event.target.style.backgroundColor = '#583E4B'"
-        @mouseout="event => event.target.style.backgroundColor = '#583E4B'"
-      >
-        Shop Now
-      </button>
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 py-16">
+      <div class="container mx-auto px-4 text-center">
+        <div class="text-6xl mb-4">🛍️</div>
+        <h1 class="text-5xl font-bold text-gray-800 mb-4">Welcome to Shopora</h1>
+        <p class="text-gray-600 text-lg mb-2">Your Premier Shopping Destination</p>
+       
+        <button 
+          @click="scrollToProducts"
+          class="mt-6 bg-[#634A61] text-white px-8 py-3 rounded-full font-semibold  transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        >
+          Shop Now
+        </button>
+      </div>
     </div>
-  </div>
     
     <!-- Products Section -->
-    <div class="container mx-auto px-3 py-4">
-      <div v-if="loading" class="text-center py-2">
-        <div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-pink-600"></div>
-      </div>
+    <div ref="productsSection" class="container mx-auto px-4 py-8">
       
-      <div v-else-if="error" class="text-center py-2">
-        <p class="text-red-500 text-xs">{{ error }}</p>
-        <button @click="fetchProducts" class="mt-1 bg-pink-600 text-white px-3 py-1 rounded text-xs">Retry</button>
+      <!-- Filter Bar Component -->
+      <FilterBar 
+        v-model="filterState"
+        :maxPriceLimit="maxPriceLimit"
+      />
+
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
+        <p class="mt-4 text-gray-500">Loading products...</p>
       </div>
-      
+
+      <!-- Error State -->
+      <div v-else-if="error" class="text-center py-12">
+        <p class="text-red-500">{{ error }}</p>
+        <button @click="fetchProducts" class="mt-4 bg-pink-600 text-white px-6 py-2 rounded-lg">
+          Retry
+        </button>
+      </div>
+
+      <!-- No Results -->
+      <div v-else-if="filteredProducts.length === 0" class="text-center py-12">
+        <p class="text-gray-500">No products found matching your filters</p>
+        <button @click="resetAllFilters" class="mt-2 text-pink-600 underline">Clear all filters</button>
+      </div>
+
       <!-- Products Grid -->
-      <div v-else class="grid grid-cols-4 gap-4">
-        <div 
-          v-for="product in products" 
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ProductCard 
+          v-for="product in filteredProducts" 
           :key="product.id" 
-          class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
-          style="border: 1.5px solid #9EA094;"
-        >
-          <!-- Only Image - Smaller -->
-          <div class="w-full" style="background-color: #BCB6B6;">
-            <img 
-              :src="product.thumbnail" 
-              :alt="product.title"
-              class="w-full h-50 object-cover mix-blend-multiply"
-            />
-          </div>
-          
-          <div class="p-2 text-center">
-            <!-- Category -->
-            <div class="flex justify-center mb-1">
-              <span class="text-[8px] text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full uppercase tracking-wider font-medium">
-                {{ product.category }}
-              </span>
-            </div>
-            
-            <!-- Title -->
-            <h3 class="font-semibold text-[10px] text-gray-800 leading-tight">{{ product.title }}</h3>
-            
-            <!-- Brand -->
-            <p class="text-[8px] text-gray-400 mt-0.5">{{ product.brand }}</p>
-            
-            <!-- Rating -->
-            <div class="flex items-center justify-center gap-1 mt-1">
-              <span class="text-yellow-400 text-[9px]">★</span>
-              <span class="text-[8px] text-gray-600">{{ product.rating }}</span>
-              <span class="text-[7px] text-gray-400">({{ product.stock }} left)</span>
-            </div>
-            
-            <!-- Price -->
-            <div class="mt-1.5">
-              <span class="text-pink-600 font-bold text-base">${{ product.price }}</span>
-              <span v-if="product.discountPercentage > 0" class="text-gray-400 line-through text-[8px] ml-1">
-                ${{ Math.round(product.price / (1 - product.discountPercentage/100)) }}
-              </span>
-            </div>
-            
-            <!-- Button -->
-            <div class="flex justify-center mt-2">
-              <button 
-               class="text-white text-xs font-medium px-4 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
-               style="background-color: #D69E95;"
-               @mouseover="event => event.target.style.backgroundColor = '#4B3E52'"
-               @mouseout="event => event.target.style.backgroundColor = '#5F4E67'"
->
-  🛒 Add to Cart
-</button>
-            </div>
-          </div>
-        </div>
+          :product="product"
+        />
       </div>
-    </div>
-    
+</div>
+
+    <!-- Product Modal -->
+    <ProductModal 
+      :isOpen="isModalOpen"
+      :product="selectedProduct"
+      @update:isOpen="isModalOpen = $event"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useProducts } from '../composables/useProducts'
+import type { Product } from '../types'
+import ProductCard from '../components/ProductCard.vue'
+import ProductModal from '../components/ProductModal.vue'
+import FilterBar from '../components/FilterBar.vue'
 
 const { products, loading, error, fetchProducts } = useProducts()
 
+// Reference for products section
+const productsSection = ref<HTMLElement | null>(null)
+
+// Scroll to products function
+const scrollToProducts = () => {
+  if (productsSection.value) {
+    productsSection.value.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    })
+  }
+}
+
+const isModalOpen = ref(false)
+const selectedProduct = ref<Product | null>(null)
+
+// Calculate max price from products
+const maxPriceLimit = computed(() => {
+  if (products.value.length === 0) return 1000
+  return Math.max(...products.value.map(p => p.price))
+})
+
+// Filter state
+const filterState = ref({
+  searchQuery: '',
+  category: 'all',
+  maxPrice: 1000,
+  minRating: 0,
+  sortBy: 'default'
+})
+
+// Reset all filters
+const resetAllFilters = () => {
+  filterState.value = {
+    searchQuery: '',
+    category: 'all',
+    maxPrice: maxPriceLimit.value,
+    minRating: 0,
+    sortBy: 'default'
+  }
+}
+
+// Filter and sort products
+const filteredProducts = computed(() => {
+  let result = [...products.value]
+
+  // Apply search filter
+  if (filterState.value.searchQuery) {
+    const q = filterState.value.searchQuery.toLowerCase()
+    result = result.filter(p => 
+      p.title.toLowerCase().includes(q) ||
+      p.brand.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    )
+  }
+
+  // Apply category filter
+  if (filterState.value.category !== 'all') {
+    result = result.filter(p => p.category === filterState.value.category)
+  }
+
+  // Apply price filter
+  result = result.filter(p => p.price <= filterState.value.maxPrice)
+
+  // Apply rating filter
+  if (filterState.value.minRating > 0) {
+    result = result.filter(p => p.rating >= filterState.value.minRating)
+  }
+
+  // Apply sorting
+  switch (filterState.value.sortBy) {
+    case 'price-asc':
+      result.sort((a, b) => a.price - b.price)
+      break
+    case 'price-desc':
+      result.sort((a, b) => b.price - a.price)
+      break
+    case 'rating-desc':
+      result.sort((a, b) => b.rating - a.rating)
+      break
+    default:
+      result.sort((a, b) => a.id - b.id)
+  }
+
+  return result
+})
+
+// Fetch products when component mounts
 onMounted(() => {
   fetchProducts()
 })
