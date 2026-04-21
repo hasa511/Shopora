@@ -9,7 +9,7 @@
        
         <button 
           @click="scrollToProducts"
-          class="mt-6 bg-[#634A61] text-white px-8 py-3 rounded-full font-semibold  transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          class="mt-6 bg-[#634A61] text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
         >
           Shop Now
         </button>
@@ -47,13 +47,17 @@
 
       <!-- Products Grid -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <ProductCard 
+        <div 
           v-for="product in filteredProducts" 
-          :key="product.id" 
-          :product="product"
-        />
+          :key="product.id"
+          @click="openModal(product)"
+        >
+          <ProductCard 
+            :product="product"
+          />
+        </div>
       </div>
-</div>
+    </div>
 
     <!-- Product Modal -->
     <ProductModal 
@@ -77,6 +81,16 @@ const { products, loading, error, fetchProducts } = useProducts()
 // Reference for products section
 const productsSection = ref<HTMLElement | null>(null)
 
+// Modal state
+const isModalOpen = ref(false)
+const selectedProduct = ref<Product | null>(null)
+
+// Open modal with selected product
+const openModal = (product: Product) => {
+  selectedProduct.value = product
+  isModalOpen.value = true
+}
+
 // Scroll to products function
 const scrollToProducts = () => {
   if (productsSection.value) {
@@ -86,9 +100,6 @@ const scrollToProducts = () => {
     })
   }
 }
-
-const isModalOpen = ref(false)
-const selectedProduct = ref<Product | null>(null)
 
 // Calculate max price from products
 const maxPriceLimit = computed(() => {

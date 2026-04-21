@@ -1,8 +1,8 @@
 <template>
   <div 
-    class="rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1 flex flex-col h-full"
+    class="rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1 flex flex-col h-full cursor-pointer"
   >
-    <div class="relative overflow-hidden bg-[#fdf2f8]  h-75 flex-shrink-0">
+    <div class="relative overflow-hidden bg-[#fdf2f8] h-75 flex-shrink-0">
       <img 
         :src="product.thumbnail" 
         :alt="product.title"
@@ -50,10 +50,6 @@ import { useCart } from '../composables/useCart'
 
 const props = defineProps<{
   product: Product
-}>()
-
-const emit = defineEmits<{
-  'view-detail': [id: number]
 }>()
 
 const { addItem } = useCart()
