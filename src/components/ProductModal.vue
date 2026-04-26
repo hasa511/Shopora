@@ -1,13 +1,13 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" @click="closeModal"></div>
+  <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="closeModal">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
     
     <div class="relative min-h-screen flex items-center justify-center p-4">
       <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <!-- Close button -->
         <button 
           @click="closeModal"
-          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10 bg-white rounded-full p-1"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -21,8 +21,17 @@
               <img 
                 :src="product.thumbnail" 
                 :alt="product.title"
-                class=" bg-[#DCD7D9] w-full h-80 rounded-lg shadow-md"
+                class="bg-[#DCD7D9] w-full h-80 rounded-lg shadow-md object-cover"
               />
+              <div v-if="product.images && product.images.length > 1" class="flex gap-2 mt-4">
+                <img 
+                  v-for="(img, idx) in product.images.slice(0, 3)" 
+                  :key="idx"
+                  :src="img"
+                  class="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80"
+                  @click="selectedImage = img"
+                />
+              </div>
             </div>
 
             <!-- Product Info -->
@@ -45,19 +54,33 @@
                 </span>
               </div>
 
-              <p class="mt-4 text-gray-600">{{ product.description }}</p>
+              <p class="mt-4 text-gray-600 leading-relaxed">{{ product.description }}</p>
 
-              <div class="mt-6">
-                <span class="text-sm font-medium text-gray-700">Category:</span>
-                <span class="ml-2 text-sm text-gray-600">{{ product.category }}</span>
+              <div class="mt-6 space-y-2">
+                <div>
+                  <span class="text-sm font-medium text-gray-700">Category:</span>
+                  <span class="ml-2 text-sm text-gray-600">{{ product.category }}</span>
+                </div>
+                <div v-if="product.sku">
+                  <span class="text-sm font-medium text-gray-700">SKU:</span>
+                  <span class="ml-2 text-sm text-gray-600">{{ product.sku }}</span>
+                </div>
               </div>
 
-              <button 
-                @click="addToCart"
-                class="mt-6 w-full bg-[#655553] text-white py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all duration-200"
-              >
-                Buy Now
-              </button>
+              <div class="mt-6 flex gap-3">
+                <button 
+                  @click="handleAddToCart"
+                  class="flex-1 bg-[#655553] hover:bg-[#483146] text-white py-3 rounded-lg font-semibold transition-all duration-200"
+                >
+                  🛒 Add to Cart
+                </button>
+                <button 
+                  @click="closeModal"
+                  class="flex-1 border-2 border-[#655553] text-[#655553] hover:bg-[#655553] hover:text-white py-3 rounded-lg font-semibold transition-all duration-200"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -67,6 +90,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { Product } from '../types'
 import { useCart } from '../composables/useCart'
 
@@ -79,15 +103,17 @@ const emit = defineEmits<{
   'update:isOpen': [value: boolean]
 }>()
 
-const { addItem } = useCart()
+const { addToCart } = useCart()
+const selectedImage = ref('')
 
 const closeModal = () => {
   emit('update:isOpen', false)
 }
 
-const addToCart = () => {
+const handleAddToCart = () => {
   if (props.product) {
-    addItem(props.product)
+    addToCart(props.product, 1)
+    closeModal()
   }
 }
 </script>

@@ -1,67 +1,35 @@
 <template>
-  <nav class="shadow-md" style="background-color: #483146;">
+  <nav class="shadow-md sticky top-0 z-50" style="background-color: #483146;">
     <div class="px-4 py-3 flex justify-between items-center">
       
-      <!-- Logo - Now on the left -->
-      <div class="flex items-center space-x-2">
+      <!-- Logo - Link to home -->
+      <router-link to="/" class="flex items-center space-x-2">
         <h1 class="text-xl font-bold text-white">Shopora</h1>
+      </router-link>
+
+      <!-- Navigation Links - Always visible -->
+      <div class="flex items-center gap-6">
+        <router-link to="/" class="text-white hover:text-yellow-200 transition">
+          Home
+        </router-link>
+        <router-link to="/cart" class="text-white hover:text-yellow-200 transition flex items-center gap-2">
+          <span>🛒 Cart</span>
+          <span 
+            v-if="cartCount > 0"
+            class="bg-yellow-400 text-pink-700 rounded-full px-2 py-0.5 text-xs font-bold min-w-[20px] text-center"
+          >
+            {{ cartCount }}
+          </span>
+        </router-link>
       </div>
-
-      <!-- Desktop Menu - Now on the right -->
-      <ul class="hidden md:flex space-x-6 font-medium text-white">
-        <li>
-          <router-link to="/" class="hover:text-yellow-200 transition">Home</router-link>
-        </li>
-        <li>
-          <router-link to="/products" class="hover:text-yellow-200 transition">Products</router-link>
-        </li>
-        <li>
-          <router-link to="/cart" class="hover:text-yellow-200 transition flex items-center gap-1">
-            🛒 Cart
-            <span class="bg-yellow-400 text-pink-700 rounded-full px-1.5 py-0.5 text-xs font-bold">0</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/about" class="hover:text-yellow-200 transition">About</router-link>
-        </li>
-      </ul>
-
-      <!-- Mobile Menu Button -->
-      <button @click="toggleMenu" class="md:hidden text-2xl text-white">
-        ☰
-      </button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div v-if="isOpen" class="md:hidden px-4 pb-4" style="background-color: #483146;">
-      <ul class="space-y-3 font-medium text-white">
-        <li>
-          <router-link to="/" @click="toggleMenu" class="hover:text-yellow-200 block">Home</router-link>
-        </li>
-        <li>
-          <router-link to="/products" @click="toggleMenu" class="hover:text-yellow-200 block">Products</router-link>
-        </li>
-        <li>
-          <router-link to="/cart" @click="toggleMenu" class="hover:text-yellow-200 block flex items-center gap-1">
-            Cart
-            <span class="bg-yellow-400 text-pink-700 rounded-full px-1.5 py-0.5 text-xs font-bold">0</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/about" @click="toggleMenu" class="hover:text-yellow-200 block">About</router-link>
-        </li>
-      </ul>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed } from "vue";
+import { useCart } from '../composables/useCart';
 
-const isOpen = ref(false);
-const cartCount = ref(0);
-
-const toggleMenu = () => {
-  isOpen.value = !isOpen.value;
-};
+const { totalItems } = useCart();
+const cartCount = computed(() => totalItems.value);
 </script>

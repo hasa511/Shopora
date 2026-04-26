@@ -7,7 +7,6 @@ export function useProducts() {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  // Add more categories here
   const categoriesToFetch = ['beauty', 'fragrances', 'furniture', 'skincare', 'tops', 'womens-dresses']
 
   const fetchProducts = async () => {
@@ -16,31 +15,59 @@ export function useProducts() {
     products.value = []
 
     try {
-      // Create an array of promises for each category API call
+      console.log('Starting to fetch products...')
+      
+      // Try alternative API endpoints if categories fail
+      try {
+        // First try: Get all products directly
+        const response = await axios.get('https://dummyjson.com/products?limit=100')
+        if (response.data && response.data.products) {
+          products.value = response.data.products
+          console.log(`Loaded ${products.value.length} products from main endpoint`)
+          loading.value = false
+          return
+        }
+      } catch (mainError) {
+        console.log('Main endpoint failed, trying categories...')
+      }
+      
+      // Second try: Fetch by categories
       const promises = categoriesToFetch.map(category =>
         axios.get(`https://dummyjson.com/products/category/${category}?limit=50`)
       )
 
-      // Wait for all API calls to complete
       const responses = await Promise.all(promises)
-
-      // Combine products from all responses
       let allProducts: Product[] = []
+      
       responses.forEach(response => {
         if (response.data && response.data.products) {
           allProducts = [...allProducts, ...response.data.products]
         }
       })
 
-      products.value = allProducts
-      console.log(`Loaded ${products.value.length} products from categories:`, categoriesToFetch)
-      console.log('Products:', products.value)
+      // Remove duplicates by id
+      const uniqueProducts = Array.from(
+        new Map(allProducts.map(product => [product.id, product])).values()
+      )
 
-    } catch (err) {
-      error.value = 'Failed to load products from specific categories'
-      console.error(err)
+      products.value = uniqueProducts
+      console.log(`Loaded ${products.value.length} products from categories`)
+
+    } catch (err: any) {
+      console.error('Failed to load products:', err)
+      error.value = err.message || 'Failed to load products. Please check your internet connection.'
     } finally {
       loading.value = false
+    }
+  }
+
+  const fetchProductById = async (id: number): Promise<Product | null> => {
+    try {
+      const response = await axios.get(`https://dummyjson.com/products/${id}`)
+      return response.data as Product
+    } catch (err) {
+      console.error('Failed to fetch product:', err)
+      return null
     }
   }
 
@@ -48,6 +75,7 @@ export function useProducts() {
     products,
     loading,
     error,
-    fetchProducts
+    fetchProducts,
+    fetchProductById
   }
 }

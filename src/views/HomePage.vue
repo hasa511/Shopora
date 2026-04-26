@@ -19,7 +19,7 @@
     <!-- Products Section -->
     <div ref="productsSection" class="container mx-auto px-4 py-8">
       
-      <!-- Filter Bar Component -->
+      <!-- Filter Bar -->
       <FilterBar 
         v-model="filterState"
         :maxPriceLimit="maxPriceLimit"
@@ -27,14 +27,14 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#634A61]"></div>
         <p class="mt-4 text-gray-500">Loading products...</p>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="text-center py-12">
         <p class="text-red-500">{{ error }}</p>
-        <button @click="fetchProducts" class="mt-4 bg-pink-600 text-white px-6 py-2 rounded-lg">
+        <button @click="fetchProducts" class="mt-4 bg-[#634A61] text-white px-6 py-2 rounded-lg">
           Retry
         </button>
       </div>
@@ -42,20 +42,16 @@
       <!-- No Results -->
       <div v-else-if="filteredProducts.length === 0" class="text-center py-12">
         <p class="text-gray-500">No products found matching your filters</p>
-        <button @click="resetAllFilters" class="mt-2 text-pink-600 underline">Clear all filters</button>
+        <button @click="resetAllFilters" class="mt-2 text-[#634A61] underline">Clear all filters</button>
       </div>
 
       <!-- Products Grid -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div 
+        <ProductCard 
           v-for="product in filteredProducts" 
-          :key="product.id"
-          @click="openModal(product)"
-        >
-          <ProductCard 
-            :product="product"
-          />
-        </div>
+          :key="product.id" 
+          :product="product"
+        />
       </div>
     </div>
 
@@ -71,27 +67,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useProducts } from '../composables/useProducts'
-import type { Product } from '../types'
+import type { Product, FilterState } from '../types'
 import ProductCard from '../components/ProductCard.vue'
 import ProductModal from '../components/ProductModal.vue'
 import FilterBar from '../components/FilterBar.vue'
 
 const { products, loading, error, fetchProducts } = useProducts()
 
-// Reference for products section
 const productsSection = ref<HTMLElement | null>(null)
 
 // Modal state
 const isModalOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
 
-// Open modal with selected product
-const openModal = (product: Product) => {
-  selectedProduct.value = product
-  isModalOpen.value = true
-}
-
-// Scroll to products function
 const scrollToProducts = () => {
   if (productsSection.value) {
     productsSection.value.scrollIntoView({ 
@@ -101,14 +89,12 @@ const scrollToProducts = () => {
   }
 }
 
-// Calculate max price from products
 const maxPriceLimit = computed(() => {
   if (products.value.length === 0) return 1000
   return Math.max(...products.value.map(p => p.price))
 })
 
-// Filter state
-const filterState = ref({
+const filterState = ref<FilterState>({
   searchQuery: '',
   category: 'all',
   maxPrice: 1000,
@@ -116,7 +102,6 @@ const filterState = ref({
   sortBy: 'default'
 })
 
-// Reset all filters
 const resetAllFilters = () => {
   filterState.value = {
     searchQuery: '',
@@ -127,11 +112,9 @@ const resetAllFilters = () => {
   }
 }
 
-// Filter and sort products
 const filteredProducts = computed(() => {
   let result = [...products.value]
 
-  // Apply search filter
   if (filterState.value.searchQuery) {
     const q = filterState.value.searchQuery.toLowerCase()
     result = result.filter(p => 
@@ -142,20 +125,16 @@ const filteredProducts = computed(() => {
     )
   }
 
-  // Apply category filter
   if (filterState.value.category !== 'all') {
     result = result.filter(p => p.category === filterState.value.category)
   }
 
-  // Apply price filter
   result = result.filter(p => p.price <= filterState.value.maxPrice)
 
-  // Apply rating filter
   if (filterState.value.minRating > 0) {
     result = result.filter(p => p.rating >= filterState.value.minRating)
   }
 
-  // Apply sorting
   switch (filterState.value.sortBy) {
     case 'price-asc':
       result.sort((a, b) => a.price - b.price)
@@ -173,7 +152,6 @@ const filteredProducts = computed(() => {
   return result
 })
 
-// Fetch products when component mounts
 onMounted(() => {
   fetchProducts()
 })
