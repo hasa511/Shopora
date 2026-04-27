@@ -1,11 +1,13 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-purple-50 to-pink-50 py-16">
+    <div class="bg-gradient-to-br from-pink-50 to-purple-50 py-16">
       <div class="container mx-auto px-4 text-center">
         <div class="text-6xl mb-4">🛍️</div>
         <h1 class="text-5xl font-bold text-gray-800 mb-4">Welcome to Shopora</h1>
         <p class="text-gray-600 text-lg mb-2">Your Premier Shopping Destination</p>
+        
+        
        
         <button 
           @click="scrollToProducts"
@@ -67,12 +69,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useProducts } from '../composables/useProducts'
+import { useAuth } from '../composables/useAuth'
 import type { Product, FilterState } from '../types'
 import ProductCard from '../components/ProductCard.vue'
 import ProductModal from '../components/ProductModal.vue'
 import FilterBar from '../components/FilterBar.vue'
 
 const { products, loading, error, fetchProducts } = useProducts()
+const { isAuthenticated, user } = useAuth()
 
 const productsSection = ref<HTMLElement | null>(null)
 
