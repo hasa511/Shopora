@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <!-- This div will react to dark mode changes immediately -->
+  <div :class="isDark ? 'dark' : ''" class="min-h-screen">
     <NavBar />
     <router-view />
   </div>
@@ -8,8 +9,17 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue'
 import { useAuth } from './composables/useAuth'
+import { useDarkMode } from './composables/useDarkMode'
 
-// Initialize auth check when app starts
 const { checkAuth } = useAuth()
-checkAuth() // Ensure auth state is loaded
+const { isDark, initDarkMode } = useDarkMode()
+
+checkAuth()
+initDarkMode()
+
+// Watch for dark mode changes and log
+import { watch } from 'vue'
+watch(isDark, (newVal) => {
+  console.log('App.vue - Dark mode changed to:', newVal)
+})
 </script>

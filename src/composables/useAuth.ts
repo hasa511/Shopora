@@ -17,7 +17,7 @@ export function useAuth() {
       const response = await axios.post('https://dummyjson.com/auth/login', {
         username: credentials.username,
         password: credentials.password,
-        expiresInMins: 30, // Token expires in 30 minutes
+        expiresInMins: 30,
       })
       
       const userData: User = {
@@ -27,13 +27,12 @@ export function useAuth() {
         firstName: response.data.firstName,
         lastName: response.data.lastName,
         gender: response.data.gender,
-        image: response.data.image,
+        image: response.data.image || `https://ui-avatars.com/api/?background=634A61&color=fff&bold=true&name=${response.data.firstName}`,
         token: response.data.token
       }
       
       user.value = userData
       
-      // Store in localStorage
       localStorage.setItem('auth_token', userData.token)
       localStorage.setItem('auth_user', JSON.stringify(userData))
       
@@ -48,10 +47,18 @@ export function useAuth() {
   }
 
   const logout = () => {
+    console.log('🔓 Logging out...')
+    
+    // Clear user reactive state
     user.value = null
+    
+    // Clear localStorage
     localStorage.removeItem('auth_token')
     localStorage.removeItem('auth_user')
-    // Optional: Reload page to reset all states
+    
+    console.log('✅ Logout successful - User cleared')
+    
+    // Redirect to home page (this forces a page reload and clears all states)
     window.location.href = '/'
   }
 
@@ -62,6 +69,7 @@ export function useAuth() {
     if (token && savedUser) {
       try {
         user.value = JSON.parse(savedUser)
+        console.log('✅ User restored:', user.value?.firstName)
         return true
       } catch (e) {
         console.error('Failed to parse saved user')

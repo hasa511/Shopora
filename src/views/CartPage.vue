@@ -1,30 +1,40 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-8">
-    <div class="container mx-auto px-4 max-w-6xl">
+  <div class="min-h-screen transition-colors duration-300" :class="isDark ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-purple-50'">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
       
       <!-- Header -->
       <div class="mb-8">
         <button 
           @click="$router.back()" 
-          class="mb-4 flex items-center gap-2 text-[#634A61] hover:text-[#483146] transition-colors bg-white px-4 py-2 rounded-full shadow-md inline-flex"
+          class="mb-4 flex items-center gap-2 transition-colors duration-300 rounded-full shadow-md inline-flex px-4 py-2"
+          :class="isDark ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-white text-[#634A61] hover:text-[#483146]'"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
           Continue Shopping
         </button>
-        <h1 class="text-4xl font-bold text-gray-800">Your Shopping Cart 🛒</h1>
-        <p class="text-gray-500 mt-2">{{ totalItems }} items in your cart</p>
+        <h1 class="text-4xl font-bold transition-colors duration-300" :class="isDark ? 'text-white' : 'text-gray-800'">
+          Your Shopping Cart 🛒
+        </h1>
+        <p class="mt-2 transition-colors duration-300" :class="isDark ? 'text-gray-400' : 'text-gray-500'">
+          {{ totalItems }} items in your cart
+        </p>
       </div>
       
       <!-- Empty Cart -->
-      <div v-if="cartItems.length === 0" class="bg-white rounded-3xl shadow-xl p-16 text-center">
+      <div v-if="cartItems.length === 0" class="rounded-3xl shadow-xl p-16 text-center transition-colors duration-300" :class="isDark ? 'bg-gray-800' : 'bg-white'">
         <div class="text-8xl mb-6">🛒</div>
-        <h2 class="text-3xl font-semibold text-gray-700 mb-3">Your cart is empty</h2>
-        <p class="text-gray-500 mb-8">Looks like you haven't added any items to your cart yet.</p>
+        <h2 class="text-3xl font-semibold mb-3 transition-colors duration-300" :class="isDark ? 'text-gray-300' : 'text-gray-700'">
+          Your cart is empty
+        </h2>
+        <p class="mb-8 transition-colors duration-300" :class="isDark ? 'text-gray-400' : 'text-gray-500'">
+          Looks like you haven't added any items to your cart yet.
+        </p>
         <router-link 
           to="/" 
-          class="inline-block bg-[#634A61] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#483146] transition transform hover:scale-105"
+          class="inline-block px-8 py-3 rounded-xl font-semibold transition transform hover:scale-105"
+          :class="isDark ? 'bg-[#634A61] hover:bg-[#7a5e78] text-white' : 'bg-[#634A61] hover:bg-[#483146] text-white'"
         >
           Start Shopping
         </router-link>
@@ -37,7 +47,8 @@
           <div 
             v-for="item in cartItems" 
             :key="item.id"
-            class="bg-white rounded-2xl shadow-lg p-5 flex gap-5 hover:shadow-xl transition"
+            class="rounded-2xl shadow-lg p-5 flex gap-5 hover:shadow-xl transition-all duration-300"
+            :class="isDark ? 'bg-gray-800 hover:shadow-gray-700' : 'bg-white hover:shadow-xl'"
           >
             <!-- Product Image -->
             <img 
@@ -48,14 +59,18 @@
             
             <!-- Product Info -->
             <div class="flex-1">
-              <h3 class="font-semibold text-gray-800">{{ item.title }}</h3>
-              <p class="text-sm text-gray-500 mb-2">{{ item.brand }}</p>
+              <h3 class="font-semibold transition-colors duration-300" :class="isDark ? 'text-white' : 'text-gray-800'">
+                {{ item.title }}
+              </h3>
+              <p class="text-sm mb-2" :class="isDark ? 'text-gray-400' : 'text-gray-500'">{{ item.brand }}</p>
               <div class="flex items-center gap-2">
                 <span class="text-yellow-400 text-sm">★</span>
-                <span class="text-sm text-gray-600">{{ item.rating }}</span>
+                <span class="text-sm" :class="isDark ? 'text-gray-300' : 'text-gray-600'">{{ item.rating }}</span>
               </div>
               <div class="mt-2">
-                <span class="text-xl font-bold text-[#634A61]">${{ item.price }}</span>
+                <span class="text-xl font-bold transition-colors duration-300" :class="isDark ? 'text-yellow-400' : 'text-[#634A61]'">
+                  ${{ item.price }}
+                </span>
               </div>
             </div>
             
@@ -73,22 +88,28 @@
               <div class="flex items-center gap-3 mt-4">
                 <button 
                   @click="updateQuantity(item.id, item.quantity - 1)"
-                  class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 transition text-lg font-bold"
+                  class="w-8 h-8 rounded-full transition text-lg font-bold"
+                  :class="isDark ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'"
                 >
                   -
                 </button>
-                <span class="w-8 text-center font-semibold">{{ item.quantity }}</span>
+                <span class="w-8 text-center font-semibold" :class="isDark ? 'text-white' : 'text-gray-800'">
+                  {{ item.quantity }}
+                </span>
                 <button 
                   @click="updateQuantity(item.id, item.quantity + 1)"
-                  class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 transition text-lg font-bold"
+                  class="w-8 h-8 rounded-full transition text-lg font-bold"
+                  :class="isDark ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'"
                 >
                   +
                 </button>
               </div>
               
               <div class="mt-4 text-right">
-                <span class="text-sm text-gray-500">Subtotal:</span>
-                <span class="ml-2 font-bold text-[#634A61]">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                <span class="text-sm" :class="isDark ? 'text-gray-400' : 'text-gray-500'">Subtotal:</span>
+                <span class="ml-2 font-bold transition-colors duration-300" :class="isDark ? 'text-yellow-400' : 'text-[#634A61]'">
+                  ${{ (item.price * item.quantity).toFixed(2) }}
+                </span>
               </div>
             </div>
           </div>
@@ -109,43 +130,49 @@
 
         <!-- Order Summary -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Order Summary</h2>
+          <div class="rounded-2xl shadow-lg p-6 sticky top-24 transition-colors duration-300" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+            <h2 class="text-2xl font-bold mb-6 transition-colors duration-300" :class="isDark ? 'text-white' : 'text-gray-800'">
+              Order Summary
+            </h2>
             
-            <div class="space-y-4 border-b pb-5">
+            <div class="space-y-4 border-b pb-5" :class="isDark ? 'border-gray-700' : 'border-gray-200'">
               <div class="flex justify-between">
-                <span class="text-gray-600">Subtotal</span>
-                <span class="font-semibold">${{ totalPrice.toFixed(2) }}</span>
+                <span class="transition-colors duration-300" :class="isDark ? 'text-gray-400' : 'text-gray-600'">Subtotal</span>
+                <span class="font-semibold" :class="isDark ? 'text-white' : 'text-gray-800'">${{ totalPrice.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">Shipping</span>
+                <span class="transition-colors duration-300" :class="isDark ? 'text-gray-400' : 'text-gray-600'">Shipping</span>
                 <span class="font-semibold text-green-600">Free</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">Tax</span>
-                <span class="font-semibold">$0.00</span>
+                <span class="transition-colors duration-300" :class="isDark ? 'text-gray-400' : 'text-gray-600'">Tax</span>
+                <span class="font-semibold" :class="isDark ? 'text-white' : 'text-gray-800'">$0.00</span>
               </div>
             </div>
             
-            <div class="flex justify-between mt-5 pb-5 border-b">
-              <span class="text-xl font-bold text-gray-800">Total</span>
-              <span class="text-2xl font-bold text-[#634A61]">${{ totalPrice.toFixed(2) }}</span>
+            <div class="flex justify-between mt-5 pb-5 border-b" :class="isDark ? 'border-gray-700' : 'border-gray-200'">
+              <span class="text-xl font-bold transition-colors duration-300" :class="isDark ? 'text-white' : 'text-gray-800'">Total</span>
+              <span class="text-2xl font-bold transition-colors duration-300" :class="isDark ? 'text-yellow-400' : 'text-[#634A61]'">
+                ${{ totalPrice.toFixed(2) }}
+              </span>
             </div>
             
             <div class="mt-6 space-y-4">
-              <div class="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
-                <p>Total Items: <span class="font-semibold text-gray-800">{{ totalItems }}</span></p>
+              <div class="text-sm rounded-lg p-3 transition-colors duration-300" :class="isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-50 text-gray-500'">
+                <p>Total Items: <span class="font-semibold" :class="isDark ? 'text-white' : 'text-gray-800'">{{ totalItems }}</span></p>
               </div>
               
               <button 
-                class="w-full bg-[#634A61] hover:bg-[#483146] text-white py-3 rounded-xl font-semibold transition transform hover:scale-105"
+                class="w-full py-3 rounded-xl font-semibold transition transform hover:scale-105"
+                :class="isDark ? 'bg-[#634A61] hover:bg-[#7a5e78] text-white' : 'bg-[#634A61] hover:bg-[#483146] text-white'"
               >
                 Proceed to Checkout →
               </button>
               
               <router-link 
                 to="/"
-                class="block text-center text-[#634A61] hover:underline text-sm"
+                class="block text-center text-sm transition-colors duration-300 hover:underline"
+                :class="isDark ? 'text-yellow-400' : 'text-[#634A61]'"
               >
                 ← Continue Shopping
               </router-link>
@@ -159,6 +186,7 @@
 
 <script setup lang="ts">
 import { useCart } from '../composables/useCart'
+import { useDarkMode } from '../composables/useDarkMode'
 
 const { 
   cartItems, 
@@ -168,4 +196,6 @@ const {
   totalItems, 
   totalPrice 
 } = useCart()
+
+const { isDark } = useDarkMode()
 </script>
