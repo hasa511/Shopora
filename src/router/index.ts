@@ -18,13 +18,13 @@ const router = createRouter({
       path: '/cart',
       name: 'cart',
       component: () => import('../views/CartPage.vue'),
-      meta: { requiresAuth: true } // Cart page requires authentication
+      meta: { requiresAuth: true }
     }
   ]
 })
 
-// Global navigation guard
-router.beforeEach((to, from, next) => {
+// Global navigation guard - Fixed by adding underscore to unused parameter
+router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('auth_token')
   
   // Check if the route requires authentication
