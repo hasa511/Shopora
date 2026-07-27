@@ -27,7 +27,7 @@ export function useAuth() {
         firstName: response.data.firstName,
         lastName: response.data.lastName,
         gender: response.data.gender,
-        image: response.data.image || `https://ui-avatars.com/api/?background=634A61&color=fff&bold=true&name=${response.data.firstName}`,
+        image: response.data.image || `https://ui-avatars.com/api/?background=F59E0B&color=fff&bold=true&name=${response.data.firstName}`,
         token: response.data.token
       }
       
@@ -49,16 +49,13 @@ export function useAuth() {
   const logout = () => {
     console.log('🔓 Logging out...')
     
-    // Clear user reactive state
     user.value = null
     
-    // Clear localStorage
     localStorage.removeItem('auth_token')
     localStorage.removeItem('auth_user')
     
     console.log('✅ Logout successful - User cleared')
     
-    // Redirect to home page (this forces a page reload and clears all states)
     window.location.href = '/'
   }
 
@@ -80,7 +77,6 @@ export function useAuth() {
     return false
   }
 
-  // Auto-check authentication on composable initialization
   checkAuth()
 
   return {

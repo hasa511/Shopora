@@ -7,7 +7,6 @@ export function useProducts() {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  // Add more categories here
   const categoriesToFetch = ['beauty', 'fragrances', 'furniture', 'skincare', 'tops', 'womens-dresses']
 
   const fetchProducts = async () => {
@@ -16,15 +15,12 @@ export function useProducts() {
     products.value = []
 
     try {
-      // Create an array of promises for each category API call
       const promises = categoriesToFetch.map(category =>
         axios.get(`https://dummyjson.com/products/category/${category}?limit=50`)
       )
 
-      // Wait for all API calls to complete
       const responses = await Promise.all(promises)
 
-      // Combine products from all responses
       let allProducts: Product[] = []
       responses.forEach(response => {
         if (response.data && response.data.products) {

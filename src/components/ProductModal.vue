@@ -4,7 +4,6 @@
     
     <div class="relative min-h-screen flex items-center justify-center p-4">
       <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <!-- Close button -->
         <button 
           @click="closeModal"
           class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10 bg-white rounded-full p-1"
@@ -16,7 +15,6 @@
 
         <div v-if="product" class="p-6">
           <div class="grid md:grid-cols-2 gap-6">
-            <!-- Product Image -->
             <div>
               <img 
                 :src="product.thumbnail" 
@@ -34,7 +32,6 @@
               </div>
             </div>
 
-            <!-- Product Info -->
             <div>
               <span class="text-xs text-gray-500 uppercase tracking-wider">{{ product.brand }}</span>
               <h2 class="text-2xl font-bold text-gray-800 mt-1">{{ product.title }}</h2>
@@ -48,7 +45,7 @@
               </div>
 
               <div class="mt-4">
-                <span class="text-3xl font-bold text-black">${{ product.price }}</span>
+                <span class="text-3xl font-bold text-gold-500">${{ product.price }}</span>
                 <span v-if="product.discountPercentage" class="ml-2 text-sm text-red-500">
                   {{ Math.round(product.discountPercentage) }}% OFF
                 </span>
@@ -58,7 +55,7 @@
 
               <div class="mt-6 space-y-2">
                 <div>
-                  <span class="text-sm font-medium text-gray-700">Category:</span>
+                  <span class="text-sm font-medium text-gray-700">Collection:</span>
                   <span class="ml-2 text-sm text-gray-600">{{ product.category }}</span>
                 </div>
                 <div v-if="product.sku">
@@ -70,13 +67,13 @@
               <div class="mt-6 flex gap-3">
                 <button 
                   @click="handleAddToCart"
-                  class="flex-1 bg-[#655553] hover:bg-[#483146] text-white py-3 rounded-lg font-semibold transition-all duration-200"
+                  class="flex-1 bg-gold-500 hover:bg-gold-600 text-black py-3 rounded-lg font-semibold transition-all duration-200"
                 >
                   🛒 Add to Cart
                 </button>
                 <button 
                   @click="closeModal"
-                  class="flex-1 border-2 border-[#655553] text-[#655553] hover:bg-[#655553] hover:text-white py-3 rounded-lg font-semibold transition-all duration-200"
+                  class="flex-1 border-2 border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-black py-3 rounded-lg font-semibold transition-all duration-200"
                 >
                   Close
                 </button>
@@ -117,3 +114,18 @@ const handleAddToCart = () => {
   }
 }
 </script>
+
+<style scoped>
+.text-gold-500 {
+  color: #F59E0B;
+}
+.bg-gold-500 {
+  background-color: #F59E0B;
+}
+.hover\:bg-gold-600:hover {
+  background-color: #D97706;
+}
+.border-gold-500 {
+  border-color: #F59E0B;
+}
+</style>

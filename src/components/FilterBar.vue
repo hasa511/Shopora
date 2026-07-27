@@ -1,6 +1,5 @@
 <template>
-  <div class="rounded-xl shadow-md p-4 mb-6 transition-colors duration-300" :class="isDark ? 'bg-gray-800' : 'bg-white'">
-    <!-- Search Input -->
+  <div class="rounded-xl shadow-md p-4 mb-6 transition-colors duration-300" :class="isDark ? 'bg-gray-800/50' : 'bg-white/50'">
     <div class="mb-4">
       <div class="relative">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -11,25 +10,24 @@
         <input
           v-model="localSearchQuery"
           type="text"
-          placeholder="Search products by name, brand, or category..."
-          class="w-full pl-10 pr-4 py-3 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-[#634A61] focus:border-transparent"
+          placeholder="Search luxury products by brand, name, or category..."
+          class="w-full pl-10 pr-4 py-3 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           :class="isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'"
-          @input="applyFilters"
+          @input="handleSearchInput"
         />
       </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <!-- Category Filter -->
       <div>
         <label class="block text-sm font-medium mb-2 transition-colors duration-300" :class="isDark ? 'text-gray-300' : 'text-gray-700'">
           Category
         </label>
         <select
           v-model="localCategory"
-          class="w-full px-3 py-2 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-[#634A61] focus:border-transparent"
+          class="w-full px-3 py-2 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           :class="isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'"
-          @change="applyFilters"
+          @change="handleCategoryChange"
         >
           <option value="all">All Categories</option>
           <option v-for="cat in categories" :key="cat" :value="cat">
@@ -38,7 +36,6 @@
         </select>
       </div>
 
-      <!-- Price Range Filter -->
       <div>
         <label class="block text-sm font-medium mb-2 transition-colors duration-300" :class="isDark ? 'text-gray-300' : 'text-gray-700'">
           Max Price: ${{ localMaxPrice }}
@@ -48,10 +45,10 @@
           type="range"
           min="0"
           :max="props.maxPriceLimit"
-          step="10"
-          class="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#634A61]"
+          step="100"
+          class="w-full h-2 rounded-lg appearance-none cursor-pointer accent-teal-500"
           :class="isDark ? 'bg-gray-700' : 'bg-gray-200'"
-          @input="applyFilters"
+          @input="handlePriceChange"
         />
         <div class="flex justify-between text-xs mt-1" :class="isDark ? 'text-gray-400' : 'text-gray-500'">
           <span>$0</span>
@@ -59,16 +56,15 @@
         </div>
       </div>
 
-      <!-- Rating Filter -->
       <div>
         <label class="block text-sm font-medium mb-2 transition-colors duration-300" :class="isDark ? 'text-gray-300' : 'text-gray-700'">
-          Min Rating
+          Minimum Rating
         </label>
         <select
           v-model="localMinRating"
-          class="w-full px-3 py-2 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-[#634A61] focus:border-transparent"
+          class="w-full px-3 py-2 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           :class="isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'"
-          @change="applyFilters"
+          @change="handleRatingChange"
         >
           <option :value="0">Any Rating</option>
           <option :value="4">4★ & above</option>
@@ -77,35 +73,32 @@
         </select>
       </div>
       
-      <!-- Sort By Filter -->
       <div>
         <label class="block text-sm font-medium mb-2 transition-colors duration-300" :class="isDark ? 'text-gray-300' : 'text-gray-700'">
           Sort By
         </label>
         <select
           v-model="localSortBy"
-          class="w-full px-3 py-2 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-[#634A61] focus:border-transparent"
+          class="w-full px-3 py-2 rounded-lg border transition-colors duration-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           :class="isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'"
-          @change="applyFilters"
+          @change="handleSortChange"
         >
           <option value="default">Default</option>
           <option value="price-asc">Price: Low to High</option>
           <option value="price-desc">Price: High to Low</option>
-          
+          <option value="rating">Top Rated</option>
         </select>
       </div>
     </div>
 
-    <!-- Reset Button -->
     <div class="mt-4 flex justify-between items-center">
       <div class="text-sm" :class="isDark ? 'text-gray-400' : 'text-gray-500'">
-        <span v-if="hasActiveFilters" class="text-[#634A61]">✓ Filters applied</span>
+        <span v-if="hasActiveFilters" class="text-teal-500">✓ Filters applied</span>
         <span v-else>No filters active</span>
       </div>
       <button 
         @click="resetFilters" 
-        class="px-4 py-2 text-sm rounded-lg transition-all duration-200"
-        :class="isDark ? 'bg-[#634A61] hover:bg-[#967092] text-white' : 'bg-[#634A61] hover:bg-[#967092] text-white'"
+        class="px-4 py-2 text-sm rounded-lg transition-all duration-200 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
       >
         Reset All Filters
       </button>
@@ -136,14 +129,13 @@ const emit = defineEmits<{
   'update:modelValue': [value: any]
 }>()
 
-// Local refs for two-way binding
+// Local refs
 const localSearchQuery = ref(props.modelValue.searchQuery)
 const localCategory = ref(props.modelValue.category)
 const localMaxPrice = ref(props.modelValue.maxPrice)
 const localMinRating = ref(props.modelValue.minRating)
 const localSortBy = ref(props.modelValue.sortBy)
 
-// Check if any filters are active
 const hasActiveFilters = computed(() => {
   return localSearchQuery.value !== '' ||
          localCategory.value !== 'all' ||
@@ -164,6 +156,7 @@ const formatCategory = (cat: string) => {
   return names[cat] || cat
 }
 
+// Apply filters immediately
 const applyFilters = () => {
   emit('update:modelValue', {
     searchQuery: localSearchQuery.value,
@@ -172,6 +165,27 @@ const applyFilters = () => {
     minRating: localMinRating.value,
     sortBy: localSortBy.value
   })
+}
+
+// Individual handlers for immediate updates
+const handleSearchInput = () => {
+  applyFilters()
+}
+
+const handleCategoryChange = () => {
+  applyFilters()
+}
+
+const handlePriceChange = () => {
+  applyFilters()
+}
+
+const handleRatingChange = () => {
+  applyFilters()
+}
+
+const handleSortChange = () => {
+  applyFilters()
 }
 
 const resetFilters = () => {
@@ -192,3 +206,24 @@ watch(() => props.modelValue, (newVal) => {
   localSortBy.value = newVal.sortBy
 }, { deep: true })
 </script>
+
+<style scoped>
+.accent-teal-500 {
+  accent-color: #14b8a6;
+}
+.text-teal-500 {
+  color: #14b8a6;
+}
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, #14b8a6, #06b6d4);
+}
+.hover\:from-teal-700:hover {
+  --tw-gradient-from: #0f766e;
+}
+.hover\:to-cyan-700:hover {
+  --tw-gradient-to: #0891b2;
+}
+.focus\:ring-teal-500:focus {
+  --tw-ring-color: #14b8a6;
+}
+</style>
